@@ -1,0 +1,71 @@
+def show_menu(menu_items):
+    print("Menu list:")
+    for index, (dish, cost) in enumerate(menu_items, 1):
+        print(f"{index}. {dish}: ₱{cost:.2f}")
+    print()
+
+def take_order(menu_items):
+    order = []
+    while True:
+        # Ask for the item number instead of the name
+        selection = input("Please enter the number of the item you want to order: ").strip()
+        
+        # Check if the input is a valid number within the menu range
+        if selection.isdigit():
+            selection = int(selection)
+            if 1 <= selection <= len(menu_items):
+                dish, cost = menu_items[selection - 1]
+                order.append((dish, cost))
+                print(f"{dish} has been added to your order.")
+            else:
+                print(f"Invalid number. Please select a number between 1 and {len(menu_items)}.")
+        else:
+            print("Invalid input. Please enter a number.")
+        
+        # Ask if they want to order more items
+        more_items = input("Would you like to order another item? (yes/no): ").strip().lower()
+        if more_items != 'yes':
+            break
+    return order
+
+def handle_payment(amount_due):
+    while True:
+        amount_paid = input(f"Total: ₱{amount_due:.2f}. How much is your payment?: ₱")
+        # Check if the entered payment is a valid number and if it's enough
+        if amount_paid.replace('.', '', 1).isdigit() and float(amount_paid) >= amount_due:
+            return float(amount_paid)
+        print(f"Your payment is not enough or invalid. Please render an amount greater than or equal to ₱{amount_due:.2f}.")
+
+def compute_change(amount_paid, amount_due):
+    return amount_paid - amount_due
+
+def run_order_system():
+    menu_items = [
+        ("Spaghetti", 120.00),
+        ("Chicken Adobo", 180.00),
+        ("Sinigang na Baboy", 150.00),
+        ("Lechon Kawali", 250.00),
+        ("Halo-halo", 60.00)
+    ]
+
+    show_menu(menu_items)
+
+    # Capture multiple orders until the user decides to stop
+    order = take_order(menu_items)
+    
+    # Display the full order
+    total_amount = sum(cost for _, cost in order)
+    print("\nYour order summary:")
+    for dish, cost in order:
+        print(f"{dish} - ₱{cost:.2f}")
+    print(f"Total: ₱{total_amount:.2f}")
+    
+    # Process payment
+    amount_paid = handle_payment(total_amount)
+
+    # Compute change
+    change = compute_change(amount_paid, total_amount)
+    print(f"Change: ₱{change:.2f}")
+
+if __name__ == "__main__":
+    run_order_system()
